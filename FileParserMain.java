@@ -10,24 +10,26 @@ import java.io.IOException;
 public class FileParserMain {
     public static void main(String[] args) throws InterruptedException {
         /*
-            namesCount and occupationsCount are shared objects among threads.
-            Notice: the static type for the key is a String, and the value is a Number in both maps.
-            Depending on the class you choose to use, you might get a race condition!
-            Refer to the Homework's HINTs section
+         * namesCount and occupationsCount are shared objects among threads.
+         * Notice: the static type for the key is a String, and the value is a Number in
+         * both maps.
+         * Depending on the class you choose to use, you might get a race condition!
+         * Refer to the Homework's HINTs section
          */
         // key = First Name, value = total count
-        Map<String, /* TODO Static Type for the Value */> namesCount = /* TODO: what is the right type here? */;
+        Map<String, Integer> namesCount = new ConcurrentHashMap<>();
         // key = Ocupation, value = total count
-        Map<String, /* TODO Static Type for the Value */> occupationsCount = /* TODO: what is the right type here? */;
+        Map<String, Integer> occupationCount = new ConcurrentHashMap<>();
 
         // execute the tasks with an ExecutorService
         ExecutorService executor = Executors.newCachedThreadPool();
         for (int i = 0; i < 5; i++) {
             String filename = String.format("ExportCSV(%d).csv", i);
-            Runnable task = new FileParserTask(new File(filename), namesCount, occupationsCount);
+            Runnable task = new FileParserTask(new File(filename), namesCount, occupationCount);
             executor.execute(task);
         }
-        // initiates an orderly shutdown in which previously submitted tasks are executed, but no new tasks will be accepted.
+        // initiates an orderly shutdown in which previously submitted tasks are
+        // executed, but no new tasks will be accepted.
         executor.shutdown();
         // blocks the main thread until all the threads have executed
         // OR if a time out of 10 minutes has happened
